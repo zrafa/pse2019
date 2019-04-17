@@ -9,7 +9,7 @@ En particular se debe "empujar" (mala traducción para git push) al repositorio
 en github los trabajos prácticos. 
 
 Además, se debe proveer un pequeño archivo de texto README a cada trabajo 
-práctico, que nos indique de que manera se puede ejecutar los tests 
+práctico, que nos indique de que manera se pueden ejecutar los tests 
 para verificar las implementaciones que se hicieron.
 
 Para la parte de git haremos lo siguiente :
