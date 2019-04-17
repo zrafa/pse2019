@@ -67,7 +67,7 @@ make clean	# nos aseguramos que no subiremos al repo remoto archivos
 rm *pdf         # quito el archivo pdf del enunciado del practico si existe
 cd ../..     # retrocedo dos directorios para posicionarme en el directorio raiz
 
-git add rafaelzurita      # el git add es recursivo, asi que agrega el 
+git add rafael.zurita      # el git add es recursivo, asi que agrega el 
 			  # directorio y sus subdirectorios y archivos
 git commit -m "Agrego la resolucion del tp1"
 
