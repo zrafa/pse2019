@@ -54,7 +54,7 @@ git config ­­global user.email "rafa@fi.uncoma.edu.ar"
 
 
 cd pse2019/
-git pull         #siempre un git pull antes de comenzar a trabajar
+git pull         # siempre un git pull antes de comenzar a trabajar
 
 mkdir rafael.zurita
 cd rafael.zurita
