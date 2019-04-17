@@ -47,6 +47,12 @@ Como ejemplo, estos son los comandos y pasos que he seguido para subir
 la resolución del primer práctico siguiendo esta convención:
 
 git clone https://github.com/zrafa/pse2019.git       # el clone se hace una unica vez
+git config ­­global user.name "Rafael Ignacio Zurita"  # usan vuestro nombre y mail :)
+git config ­­global user.email "rafa@fi.uncoma.edu.ar"
+
+# estos dos comandos anteriores tambien los deben hacer una unica vez
+
+
 cd pse2019/
 git pull         #siempre un git pull antes de comenzar a trabajar
 
