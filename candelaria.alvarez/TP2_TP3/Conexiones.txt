@@ -1,0 +1,25 @@
+Para este trabajo, se deben realizar las siguientes conexiones:
+------------------------|
+Arduino |		|
+Board 	| Componente	|	
+------------------------|
+PIN 8	| LED		|
+PIN 9	| LED		|
+PIN 10	| LED		|
+PIN 11	| Botón		|
+------------------------|
+
+Para el modo binario:
+El PIN 8 representa el bit menos significativo
+El PIN 9 representa el bit del medio
+El PIN 10 representa el bit más significativo
+
+Protoboard:
+*Conectar el PIN GND del arduino a la protoboard.
+*El PIN 11 se conecta con una pinX del botón, y el pinY del botón 
+(no hace contacto con pinX cuando el botón está abierto) se conecta a GND.
+* Los PIN 8-9-10 se conectan a un extremo de la resistencia.
+El otro extremo de la resistencia se conecta a la pata positiva del led (ánodo, la más larga)
+La pata negativa del led (cátodo, la más corta) se conecta a GND.
+
+Comunicación serial: para conectarse con otro arduino, TX1 debe ir a RX2 y RX1 debe ir a TX2
