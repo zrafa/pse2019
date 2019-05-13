@@ -2,8 +2,8 @@
 /* macros útiles para consultar si se presionó el boton y para inicializar
  * el estado del port_b respectivamente
  */
-#define BOTON (0x04)      /* 0b00000100 */
-#define INIT_VALUE (0x38) /* 0b00111000 */
+#define BOTON (0x08)      /* 0b00001000 */
+#define INIT_VALUE (0x07) /* 0b00000111 */
 
 /* direcciones del registros de control y datos de interfaz b*/
 volatile unsigned char *puerto_b = (unsigned char *)0x25; /* direccion de PORTB: SALIDA */
@@ -22,8 +22,8 @@ void esperar()
 /* inicializar los registro de control y datos de la interfaz b */
 void led_init()
 {
-        *(ddr_b) = *(ddr_b) | (INIT_VALUE) & (~BOTON);
-        *puerto_b = *puerto_b & (~INIT_VALUE) | BOTON;
+        *(ddr_b) = (*(ddr_b) | (INIT_VALUE)) & (~BOTON);
+        *puerto_b = (*puerto_b & (~INIT_VALUE)) | BOTON;
 }
 
 void contador(char value)
