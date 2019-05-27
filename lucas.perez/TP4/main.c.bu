@@ -1,0 +1,31 @@
+#include "utils.h"
+#include "serial.h"
+#include "adc.h"
+
+int main(void)
+{
+    int adc_val = 0;
+    // led_init();
+    serial_init();
+    adc_init();
+    
+    serial_put_char('s');
+    serial_put_char('t');
+    serial_put_char('a');
+    serial_put_char('r');
+    serial_put_char('t');
+    serial_put_char('\r');
+    serial_put_char('\n');
+
+    while (1)
+    {
+        adc_val = adc_get(0);
+        // serial_put_char(adc_val);
+        serial_put_int(adc_val, 4);
+        serial_put_char('\r');
+        serial_put_char('\n');
+        esperar();
+    }
+
+    return 0;
+}
