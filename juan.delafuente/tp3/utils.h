@@ -10,27 +10,18 @@
 #define _UTILS_H
 
 /* mascara para el led en el arduino pro mini */
-#define BOTON (0x04) /* 0b00100100 */
+#define LED_ROJO (0x20) /* 0b00100000 */
 
 /* puertos de E/S */
+
+volatile unsigned char * pin_b = (unsigned char *) 0x23;
 volatile unsigned char * puerto_b = (unsigned char *) 0x25; /* direccion de PORTB: SALIDA */
 volatile unsigned char * ddr_b = (unsigned char *) 0x24; /* direccion de DDR B (registro de control) */
-/*definir direccion para pin_b*/
-volatile unsigned char * pin_b = (unsigned char *) 0x23; /*direccion de PIN B (registro de datos) */
 
+char hubo_click();
+void led_init();
+void leds_rutina();
+void leds_prender(char c);
 
-void esperar();
-void init();
-void leds_prender();
-//void leds_apagar();
-void suma_bin(volatile unsigned char*);
-char btn_verificar();
-void leds_contador(volatile unsigned char);
-void prender_led_1();
-void prender_led_2();
-void prender_led_3();
-void apagar_led_1();
-void apagar_led_2();
-void apagar_led_3();
 
 #endif	/* _UTILS_H */

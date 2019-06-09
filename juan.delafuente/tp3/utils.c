@@ -1,71 +1,79 @@
-/* mascara para el boton externo */
-#define BOTON (0x04) /* 0b00000100 */
-#define LED_1 (0x08) /* 0b00001000 */
-#define LED_2 (0x10) /* 0b00010000 */
-#define LED_3 (0x20) /* 0b00100000 */
+
+/* mascara para leds arduino mini */
+#define LED_1 (0x01) /* 0b0000 0001 - pin 8 en arduino*/
+#define LED_2 (0x02) /* 0b0000 0010 - pin 9 en arduino*/
+#define LED_3 (0x04) /* 0b0000 0100 - pin 10 en arduino*/
+#define BOTON (0x08) /* 0b0000 1000 - pin 11 en arduino*/
+
 
 /* puertos de E/S */
 extern volatile unsigned char * puerto_b;
 extern volatile unsigned char * ddr_b;
 extern volatile unsigned char * pin_b;
 
+void led_init()
+{
+	/*Apagamos antes de cualquier cambio por seguridad*/
+  *puerto_b = *puerto_b & (~LED_1);
+	*puerto_b = *puerto_b & (~LED_2);
+	*puerto_b = *puerto_b & (~LED_3);
 
-void esperar() {
+	//Marcamos la entrada para el boton y que pines son de salida
+	*(ddr_b) = *(ddr_b) & (~BOTON);
+	*(ddr_b) = *(ddr_b) | (LED_1);
+	*(ddr_b) = *(ddr_b) | (LED_2);
+	*(ddr_b) = *(ddr_b) | (LED_3);
 
-    unsigned long i;
-    /* delay manual para contar un segundo*/
-    for (i=0; i<550000; i++);
+	//Activamos el pull-up para boton
+	*puerto_b = *puerto_b | (BOTON);
+	*pin_b = *pin_b & (~BOTON);
 }
 
-/*
- * Configuración: Establecer el 5to bit del puerto B como entrada
- *
- * 	Poner en '0' el 5to bit de la dirección 0x24, que
- * 	es el la dirección del registro de control
- *	(direccion de los datos) del puerto B (DDRB - Data Direction Register).
- *      El 5to bit define la entrada o salida del
- * 	pin del atmega328p que tiene conectado un led en una board arduino
- */
-
-void prender_led_1(void)
-{
-        *puerto_b = *puerto_b | LED_1;
+char hubo_click(){
+	volatile unsigned long i;
+	char res = (*pin_b & BOTON);
+	for (i=0; i<500000; i++){
+		res &= (*pin_b & BOTON);
+	}
+	return (res==0x00);
 }
 
-void prender_led_2(void)
-{
-        *puerto_b = *puerto_b | LED_2;
+void esperar(long tope) {
+
+    volatile unsigned long i;
+
+    /* delay manual */
+    for (i=0; i<tope; i++);
 }
 
-void prender_led_3(void)
+void led1_prender()
 {
-        *puerto_b = *puerto_b | LED_3;
+    *puerto_b = *puerto_b | LED_1;
 }
 
-
-void init(void)
+void led2_prender()
 {
-		*puerto_b = *puerto_b & (~BOTON);
-		*ddr_b = (*ddr_b) & (~BOTON);
-		//	*ddr_b = (*ddr_b) & (~0b00000100);
-		//	*ddr_b |=  (LEDS_EXT);/* Coloca '0' en el 5to bit del ddr_b y colocar '1' los bits 2do,3ro y 4to*/
-		*puerto_b |= BOTON;
-
+    *puerto_b = *puerto_b | LED_2;
 }
 
-void apagar_led_1(void)
+void led3_prender()
 {
-        *puerto_b = *puerto_b & (~LED_1);
+    *puerto_b = *puerto_b | LED_3;
 }
 
-void apagar_led_2(void)
+void led1_apagar()
 {
-        *puerto_b = *puerto_b & (~LED_2);
+    *puerto_b = *puerto_b & (~LED_1);
 }
 
-void apagar_led_3(void)
+void led2_apagar()
 {
-        *puerto_b = *puerto_b & (~LED_3);
+    *puerto_b = *puerto_b & (~LED_2);
+}
+
+void led3_apagar()
+{
+    *puerto_b = *puerto_b & (~LED_3);
 }
 
 
@@ -88,63 +96,66 @@ void suma_bin(char* contador)
 	}
 }
 
-//funcion para verificar si se pulsa el boton
-char btn_verificar(void){
-	unsigned char aux = 0x00;
-	aux = *pin_b & BOTON;
-	return aux;
+
+void leds_rutina() {
+
+	volatile unsigned long i;
+	i = 440000;
+
+	led1_prender();
+	led2_prender();
+	led3_prender();
+	esperar(i);
+	led1_apagar();
+	led2_apagar();
+	led3_apagar();
 }
 
-void leds_contador(char mascara){
+void leds_prender(char c) {
 
-	*puerto_b = *puerto_b & ~LED_1 & ~LED_2 & ~LED_3; //apagar todos los leds
- 	*puerto_b = *puerto_b | mascara; 									//enciender solo los correspondendientes
+	led1_apagar();
+	led2_apagar();
+	led3_apagar();
 
-}
-
-
-void leds_prender(char numero){
-
-	prender_led_1();
-	prender_led_2();
-	prender_led_3();
-	apagar_led_1();
-	apagar_led_2();
-	apagar_led_3();
-
-	switch (numero)
+	switch(c)
 	{
-					case 0:
-									break;
-					case 1:
-									prender_led_1();
-									break;
-					case 2:
-									prender_led_2();
-									break;
-					case 3:
-									prender_led_1();
-									prender_led_2();
-									break;
-					case 4:
-									prender_led_3();
-									break;
-					case 5:
-									prender_led_1();
-									prender_led_3();
-									break;
-					case 6:
-									prender_led_2();
-									prender_led_3();
-									break;
-					case 7:
-									prender_led_1();
-									prender_led_2();
-									prender_led_3();
-									break;
-					default:
-									prender_led_3();
-									break;
+		case 0:
+			break;
+		case 1:
+			led1_prender();
+			break;
+		case 2:
+			led2_prender();
+			break;
+		case 3:
+			led1_prender();
+			led2_prender();
+			break;
+		case 4:
+			led3_prender();
+			break;
+		case 5:
+			led3_prender();
+			led1_prender();
+			break;
+		case 6:
+			led3_prender();
+			led2_prender();
+			break;
+		case 7:
+			led1_prender();
+			led2_prender();
+			led3_prender();
+			break;
+		default:
+			led2_prender();
+			break;
 
 	}
+
+	unsigned long i =50000;
+	esperar(i);
+	led1_apagar();
+	led2_apagar();
+	led3_apagar();
 }
