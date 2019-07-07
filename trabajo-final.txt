@@ -19,7 +19,8 @@ es el momento. Por ejemplo, hemos subido la última clase
 con algunas correciones menores.
 
 Cuando se diseña para utilizar FreeRTOS se debe tener
-en cuenta sus características de gestión:
+en cuenta sus características y gestión (este resumen está
+incompleto, aí que no hay que tomarlo como guía espiritual :)
   - las tareas y sus posibles prioridades,
   - que las prioridades son fijas,
   - que hay herencia de prioridad unicamente en exclusión mutua,
