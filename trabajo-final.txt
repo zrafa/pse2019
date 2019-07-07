@@ -1,0 +1,110 @@
+
+Hola a todos, este correo es para indicar algunas pautas sobre el trabajo
+final a presentar, y para felicitar a todos por el trabajo realizado
+durante el cuatrimestre: gracias por haber participado de Programación 
+de Sistemas Embebidos 2019!
+
+El trabajo final parece estar definido : tanques con lasers controlados
+por una aplicacion embebida, compuesta por tareas gestionadas por
+FreeRTOS (núcleo de tiempo real).
+
+Como es su primera experiencia en este tipo de arquitecturas deberán
+trabajar en dos o tres (o mas) prototipos o ideas.
+En la última clase presentamos algunas ideas posibles, de tareas
+y sus formas de comunicarse.
+
+Les comento que mañana PEDCO entrará en mantenimiento (no sabemos
+si por un día o muchos), así que si les faltó bajar algún archivo
+es el momento.
+
+Cuando se diseña para utilizar FreeRTOS se debe tener
+en cuenta sus características de gestión:
+  - las tareas y sus posibles prioridades,
+  - que las prioridades son fijas,
+  - que hay herencia de prioridad unicamente en exclusión mutua,
+  - que si existe una tarea de mayor prioridad en estado de LISTO nunca
+    delegará la CPU, a no ser que pase a estado BLOQUEADO por esperar
+    un semáforo, un mutex, o ejecutar una función explícita de
+    la API de FreeRTOS para bloquearse (delay, delay_until),
+  - que los semáforos son para enviar una señal a otro proceso,
+  - que los mutex son para acceder a recursos compartidos (variable 
+    globales, registros del hw, etc) entre diferentes tareas,
+  - que las colas se utilizan para transferir (comunicarse) 
+    información entre tareas (siempre y cuando esa información
+    no sea simplemente una señal),
+  - que se puede utilizar memoria dinámica (heap/malloc/free) 
+    a través de la API de FreeRTOS,
+  - que algunas funciones de la API de FreeRTOS pueden utilizarse
+    en rutinas de atención de interrupciones (ISR), pero
+    tienen una API especial para ello (ver transparencias de la clase 9 y 10)
+
+
+Lo mas indicado es ir diseñando pocas tareas que logren el cometido
+de la aplicación. Realizar un diseño simple/sencillo. No es recomendable
+intentar componer "la super aplicación de mi vida".
+
+Como ejemplo de uso de semáforos pueden intentar realizar la gestión
+del "disparo recibido" a través del sensor de luz y el ADC como sigue
+aparece en la transparencia de la clase:
+
+Supongamos que una tarea "gestor_de_disparo_recibido" gestiona 
+si se reciben o no disparos. La tarea realiza lo siguiente: 
+ - activa la lectura del ADC de uno de sus entradas del multiplexor y 
+ - se queda esperando un semaforo llamado (adc_listo) (la tarea pasa a
+   estado BLOQUEADO).
+
+El driver ADC activa la lectura con interrupciones.
+Cuando el ADC finalizó una lectura y conversión activa la interrupción y 
+la ISR del ADC se ejecuta realizando lo siguiente:
+   - toma el valor generado por el ADC y lo pone en una variable global
+compartida
+   - envía la señal semáforo adc_listo
+   - fin de la ISR
+
+FreeRTOS pasa la tarea "gestor_de_disparo_recibido" a estado de LISTO 
+porque está la señal del semáforo disponible. La tarea se ejecuta,
+lee el valor de la variable global, y si fue un disparo hará alguna
+acción (LEDS, RUIDO, MOVIMIENTOS BRUSCOS, restar una vida, etc, que
+ustedes definan para el trabajo final).
+Luego solicitará una nueva lectura al driver ADC y se quedará
+esperando la señal (semáforo) nuevamente.
+
+Nota interesante de prioridades: Tal vez se podría tener
+una tarea con la mas alta prioridad en el sistema, 
+llamada "game_over", que simplemente espera una señal
+(semáforo) llamado "game_over_sm".
+Esta tarea estará bloqueada desde su inicio por esta espera.
+
+La tarea ejemplificada anteriormente (gestion_de_disparo_recibido)
+podría llevar un contador de cantidad de vidas. Cuando ese contador
+llegó a cero podría activar la señal "game_over_sm".
+
+Al estar esa señal disponible la tarea game_over entrará en ejecución
+y el juego finalizará (esta tarea tal vez emita luces, ruido, movimientos
+etc por siempre, ya que no se bloqueará nunca mas). Para reiniciar
+el juego simplemente se reinicia el microcontrolador.
+
+Estos son ejemplos de como ir encontrando ciertas tareas necesarias,
+y cómo encontrar el mecanismo provisto por FreeRTOS para anexarla
+en un diseño con este último.
+
+La entrega debe ser similar a los sitios webs de los proyectos
+ejemplos que mostramos al principio del cuatrimestre 
+(https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/).
+Ejemplos cualquiera de ese link: 
+1. https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2014/kl669_bt268/kl669_bt268/index.html
+2. https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2017/hc466_dhf63_jc2367/hc466_dhf63_jc2367/hc466_dhf63_jc2367/index.html
+3. https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2014/ht425/Report/Report/ECE%204760%20Time%20System.html
+
+La entrega del trabajo final debe contener :
+ - informe (página web) describiendo 
+      * el sistema embebido y cómo se utiliza,
+      * la arquitectura del softwate (diagrama y descripción general escrita) 
+      * la arquitectura del hardware (diagrama de bloques y descripción general escrita) 
+      * alguna consideración de la utilización de FreeRTOS
+      * algún video y/o foto del trabajo
+ - el código fuente en el git compartido
+ - demostración presencial (nos explican y muestran el trabajo en día y hora
+a determinar).
+
+
