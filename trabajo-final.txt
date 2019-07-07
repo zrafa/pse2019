@@ -10,12 +10,13 @@ FreeRTOS (núcleo de tiempo real).
 
 Como es su primera experiencia en este tipo de arquitecturas deberán
 trabajar en dos o tres (o mas) prototipos o ideas.
-En la última clase presentamos algunas ideas posibles, de tareas
-y sus formas de comunicarse.
+En la última clase presentamos un bosquejo posible, de tareas para
+este trabajo y sus formas de comunicarse.
 
 Les comento que mañana PEDCO entrará en mantenimiento (no sabemos
 si por un día o muchos), así que si les faltó bajar algún archivo
-es el momento.
+es el momento. Por ejemplo, hemos subido la última clase
+con algunas correciones menores.
 
 Cuando se diseña para utilizar FreeRTOS se debe tener
 en cuenta sus características de gestión:
@@ -44,8 +45,8 @@ de la aplicación. Realizar un diseño simple/sencillo. No es recomendable
 intentar componer "la super aplicación de mi vida".
 
 Como ejemplo de uso de semáforos pueden intentar realizar la gestión
-del "disparo recibido" a través del sensor de luz y el ADC como sigue
-aparece en la transparencia de la clase:
+del "disparo recibido" a través del sensor de luz y el ADC, como
+aparece tambien en la transparencia de la última clase:
 
 Supongamos que una tarea "gestor_de_disparo_recibido" gestiona 
 si se reciben o no disparos. La tarea realiza lo siguiente: 
@@ -53,7 +54,8 @@ si se reciben o no disparos. La tarea realiza lo siguiente:
  - se queda esperando un semaforo llamado (adc_listo) (la tarea pasa a
    estado BLOQUEADO).
 
-El driver ADC activa la lectura con interrupciones.
+El driver ADC activa la lectura (y la interrupción para cuando
+la lectura finalice) .
 Cuando el ADC finalizó una lectura y conversión activa la interrupción y 
 la ISR del ADC se ejecuta realizando lo siguiente:
    - toma el valor generado por el ADC y lo pone en una variable global
